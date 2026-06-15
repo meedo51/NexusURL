@@ -1,0 +1,391 @@
+openapi: 3.0.3
+info:
+  title: NexusURL API
+  description: URL shortening service API
+  version: 1.0.0
+  contact:
+    email: notifications@xus.me
+
+servers:
+  - url: http://187.77.183.14:7658/api
+    description: Backend API
+  - url: http://187.77.183.14:1156/api/public
+    description: Public API
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        bio:
+          type: string
+        emailVerified:
+          type: boolean
+        twoFactorEnabled:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+    Link:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        shortUrl:
+          type: string
+        shortCode:
+          type: string
+        longUrl:
+          type: string
+        clicks:
+          type: integer
+        hasPassword:
+          type: boolean
+        expirationDate:
+          type: string
+          format: date-time
+        oneTimeAccess:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+    LinkStats:
+      type: object
+      properties:
+        totalClicks:
+          type: integer
+        uniqueVisitors:
+          type: integer
+        clicksByDay:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+              count:
+                type: integer
+        devices:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              count:
+                type: integer
+
+paths:
+  /auth/signup:
+    post:
+      tags: [Authentication]
+      summary: Create a new account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, email, password, confirmPassword]
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                confirmPassword:
+                  type: string
+      responses:
+        '201':
+          description: Account created
+        '409':
+          description: Email or username exists
+
+  /auth/signin:
+    post:
+      tags: [Authentication]
+      summary: Sign in
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Sign in successful
+        '401':
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      tags: [Authentication]
+      summary: Sign out
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logged out
+
+  /auth/refresh:
+    post:
+      tags: [Authentication]
+      summary: Refresh JWT token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed
+
+  /auth/2fa/setup:
+    post:
+      tags: [Authentication]
+      summary: Setup 2FA
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Returns QR code and backup codes
+
+  /auth/2fa/verify:
+    post:
+      tags: [Authentication]
+      summary: Verify and enable 2FA
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+      responses:
+        '200':
+          description: 2FA enabled
+
+  /links:
+    post:
+      tags: [Links]
+      summary: Create shortened link
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [longUrl]
+              properties:
+                longUrl:
+                  type: string
+                  format: uri
+                customAlias:
+                  type: string
+                password:
+                  type: string
+                expirationDate:
+                  type: string
+                  format: date-time
+                oneTimeAccess:
+                  type: boolean
+      responses:
+        '201':
+          description: Link created
+    get:
+      tags: [Links]
+      summary: Get user links
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Paginated list of links
+
+  /links/{id}/stats:
+    get:
+      tags: [Links]
+      summary: Get link statistics
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Link statistics
+
+  /user/profile:
+    get:
+      tags: [User]
+      summary: Get user profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile
+    put:
+      tags: [User]
+      summary: Update profile
+      security:
+        - bearerAuth: []
+
+  /user/security/password:
+    put:
+      tags: [User]
+      summary: Change password
+      security:
+        - bearerAuth: []
+
+  /user/preferences:
+    put:
+      tags: [User]
+      summary: Update preferences
+      security:
+        - bearerAuth: []
+
+  /user/api-key:
+    get:
+      tags: [User]
+      summary: Get API key
+      security:
+        - bearerAuth: []
+
+  /user/api-key/regenerate:
+    post:
+      tags: [User]
+      summary: Regenerate API key
+      security:
+        - bearerAuth: []
+
+  /user/account:
+    delete:
+      tags: [User]
+      summary: Delete account
+      security:
+        - bearerAuth: []
+
+  /public/create:
+    get:
+      tags: [Public API]
+      summary: Create short link (public)
+      parameters:
+        - name: act
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: l
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: ca
+          in: query
+          schema:
+            type: string
+        - name: pwd
+          in: query
+          schema:
+            type: string
+        - name: exp
+          in: query
+          schema:
+            type: string
+        - name: acp
+          in: query
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Link created
+        '429':
+          description: Rate limited
+
+  /qr/{shortCode}:
+    get:
+      tags: [QR Code]
+      summary: Generate QR code
+      parameters:
+        - name: shortCode
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: size
+          in: query
+          schema:
+            type: integer
+            minimum: 100
+            maximum: 1000
+      responses:
+        '200':
+          description: PNG image
