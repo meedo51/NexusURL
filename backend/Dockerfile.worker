@@ -14,8 +14,6 @@ RUN npm run build
 
 FROM node:20-alpine
 
-RUN apk add --no-cache curl
-
 WORKDIR /app
 
 RUN addgroup -g 1001 -S nodejs && \
@@ -27,8 +25,5 @@ COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 COPY --from=builder --chown=nodejs:nodejs /app/prisma ./prisma
 
 USER nodejs
-
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:3001/health || exit 1
 
 CMD ["node", "dist/workers/emailWorker.js"]
