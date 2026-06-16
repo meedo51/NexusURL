@@ -97,34 +97,16 @@ export default function PublicApiPage() {
       <div className="card">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Code Examples</h2>
         <div className="space-y-4">
-          <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">cURL</h3>
-            <pre className="bg-gray-900 text-gray-100 rounded-lg p-4 text-sm overflow-x-auto">
-curl "http://187.77.183.14:1156/api/public/create?act=ct&amp;l=https://example.com/very/long/url&amp;ca=my-link&amp;pwd=secret123"
-            </pre>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">JavaScript (Fetch)</h3>
-            <pre className="bg-gray-900 text-gray-100 rounded-lg p-4 text-sm overflow-x-auto">
-fetch('http://187.77.183.14:1156/api/public/create?act=ct&amp;l=https://example.com')
-  .then(r =&gt; r.json())
-  .then(d =&gt; console.log(d));
-            </pre>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Python</h3>
-            <pre className="bg-gray-900 text-gray-100 rounded-lg p-4 text-sm overflow-x-auto">
-import requests
-
-params = {
-    'act': 'ct',
-    'l': 'https://example.com/very/long/url',
-    'ca': 'my-link',
-}
-r = requests.get('http://187.77.183.14:1156/api/public/create', params=params)
-print(r.json())
-            </pre>
-          </div>
+          {[
+            ['cURL', 'curl "http://187.77.183.14:1156/api/public/create?act=ct&l=https://example.com/very/long/url&ca=my-link&pwd=secret123"'],
+            ['JavaScript (Fetch)', "fetch('http://187.77.183.14:1156/api/public/create?act=ct&l=https://example.com')\n  .then(r => r.json())\n  .then(d => console.log(d));"],
+            ['Python', "import requests\n\nparams = {\n    'act': 'ct',\n    'l': 'https://example.com/very/long/url',\n    'ca': 'my-link',\n}\nr = requests.get('http://187.77.183.14:1156/api/public/create', params=params)\nprint(r.json())"],
+          ].map(([title, code]) => (
+            <div key={title as string}>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">{title as string}</h3>
+              <pre className="bg-gray-900 text-gray-100 rounded-lg p-4 text-sm overflow-x-auto">{code as string}</pre>
+            </div>
+          ))}
         </div>
       </div>
 
