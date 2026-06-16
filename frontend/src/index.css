@@ -6,15 +6,25 @@
 
 @layer base {
   body {
-    @apply min-h-screen bg-brand-dark text-white font-sans antialiased;
+    @apply min-h-screen bg-[#0A0A1A] text-[#F8F9FE] font-sans antialiased;
   }
 
   html {
     scroll-behavior: smooth;
   }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.1) transparent;
+  }
+
+  *::-webkit-scrollbar { width: 6px; }
+  *::-webkit-scrollbar-track { background: transparent; }
+  *::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
 }
 
 @layer components {
+  /* Existing app classes */
   .btn-primary {
     @apply bg-primary-500 hover:bg-primary-600 text-white font-medium py-2.5 px-5 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
   }
@@ -37,99 +47,45 @@
 
 @layer utilities {
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-purple via-primary-500 to-brand-coral;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#6C3CE1] via-[#6366f1] to-[#FF6B6B];
   }
 
   .text-gradient-cyan {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-cyan to-brand-purple;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#00D4FF] to-[#6C3CE1];
   }
 
-  .glass {
+  .bg-glass {
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.06);
   }
 
-  .glass-hover {
+  .bg-glass-hover {
     transition: all 0.3s ease;
   }
 
-  .glass-hover:hover {
+  .bg-glass-hover:hover {
     background: rgba(255, 255, 255, 0.06);
     border-color: rgba(108, 60, 225, 0.3);
     box-shadow: 0 8px 32px rgba(108, 60, 225, 0.15);
   }
 
-  .glow-border {
-    box-shadow: 0 0 15px rgba(108, 60, 225, 0.3), inset 0 0 15px rgba(108, 60, 225, 0.05);
-  }
-
-  .glow-border-cyan {
-    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3), inset 0 0 15px rgba(0, 212, 255, 0.05);
-  }
-
-  .btn-gradient {
+  .bg-gradient-btn {
     background: linear-gradient(135deg, #6C3CE1, #FF6B6B);
     transition: all 0.3s ease;
   }
 
-  .btn-gradient:hover {
+  .bg-gradient-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 40px rgba(108, 60, 225, 0.35);
   }
 
-  .btn-gradient-cyan {
-    background: linear-gradient(135deg, #00D4FF, #6C3CE1);
-    transition: all 0.3s ease;
+  .shadow-glow {
+    box-shadow: 0 0 40px rgba(108, 60, 225, 0.15);
   }
 
-  .btn-gradient-cyan:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 40px rgba(0, 212, 255, 0.35);
-  }
-
-  .hero-gradient {
-    background:
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(108, 60, 225, 0.2) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 30% at 20% 80%, rgba(255, 107, 107, 0.08) 0%, transparent 50%),
-      radial-gradient(ellipse 50% 30% at 80% 80%, rgba(0, 212, 255, 0.08) 0%, transparent 50%);
-  }
-
-  .section-gradient {
-    background:
-      radial-gradient(ellipse 60% 40% at 50% 0%, rgba(108, 60, 225, 0.08) 0%, transparent 60%);
-  }
-
-  .animate-delay-100 {
-    animation-delay: 100ms;
-  }
-
-  .animate-delay-200 {
-    animation-delay: 200ms;
-  }
-
-  .animate-delay-300 {
-    animation-delay: 300ms;
-  }
-
-  .animate-delay-500 {
-    animation-delay: 500ms;
-  }
-
-  .animate-delay-700 {
-    animation-delay: 700ms;
-  }
-
-  .animate-delay-1000 {
-    animation-delay: 1000ms;
-  }
-
-  .perspective-1000 {
-    perspective: 1000px;
-  }
-
-  .rotate-y-5 {
-    transform: rotateY(5deg);
+  .shadow-glow-sm {
+    box-shadow: 0 0 20px rgba(108, 60, 225, 0.1);
   }
 }
