@@ -44,7 +44,7 @@ services:
       NODE_ENV: production
       APP_ENV: production
       DISABLE_FILE_LOGGING: "true"
-      PORT: 3001
+      PORT: 7658
       DATABASE_URL: postgresql://${DB_USER:-nexususer}:${DB_PASSWORD:-nexuspass123}@postgres:5432/nexusurl
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-this}
