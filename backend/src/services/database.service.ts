@@ -7,19 +7,9 @@ class DatabaseService {
   constructor() {
     this.prisma = new PrismaClient({
       log: [
-        { emit: 'event', level: 'query' },
-        { emit: 'event', level: 'error' },
-        { emit: 'event', level: 'info' },
-        { emit: 'event', level: 'warn' },
+        { emit: 'stdout', level: 'warn' },
+        { emit: 'stdout', level: 'error' },
       ],
-    });
-
-    this.prisma.$on('error' as any, (e: any) => {
-      logger.error('Prisma error:', e);
-    });
-
-    this.prisma.$on('warn' as any, (e: any) => {
-      logger.warn('Prisma warn:', e);
     });
   }
 
