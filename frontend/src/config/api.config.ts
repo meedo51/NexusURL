@@ -12,7 +12,7 @@ export const API_CONFIG = {
 
   BASE_URLS: {
     FRONTEND: 'http://187.77.183.14:1590',
-    BACKEND_API: 'http://187.77.183.14:7658',
+    BACKEND_API: 'http://187.77.183.14:1590',
     PUBLIC_API: 'http://187.77.183.14:1156',
     SHORTENER: 'http://xus.me',
     QR_BASE: 'http://xus.me',
