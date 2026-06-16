@@ -1,10 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply min-h-screen;
+    @apply min-h-screen bg-brand-dark text-white font-sans antialiased;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 }
 
@@ -26,5 +32,104 @@
   }
   .badge {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-purple via-primary-500 to-brand-coral;
+  }
+
+  .text-gradient-cyan {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-cyan to-brand-purple;
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .glass-hover {
+    transition: all 0.3s ease;
+  }
+
+  .glass-hover:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(108, 60, 225, 0.3);
+    box-shadow: 0 8px 32px rgba(108, 60, 225, 0.15);
+  }
+
+  .glow-border {
+    box-shadow: 0 0 15px rgba(108, 60, 225, 0.3), inset 0 0 15px rgba(108, 60, 225, 0.05);
+  }
+
+  .glow-border-cyan {
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3), inset 0 0 15px rgba(0, 212, 255, 0.05);
+  }
+
+  .btn-gradient {
+    background: linear-gradient(135deg, #6C3CE1, #FF6B6B);
+    transition: all 0.3s ease;
+  }
+
+  .btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 40px rgba(108, 60, 225, 0.35);
+  }
+
+  .btn-gradient-cyan {
+    background: linear-gradient(135deg, #00D4FF, #6C3CE1);
+    transition: all 0.3s ease;
+  }
+
+  .btn-gradient-cyan:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 40px rgba(0, 212, 255, 0.35);
+  }
+
+  .hero-gradient {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(108, 60, 225, 0.2) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 30% at 20% 80%, rgba(255, 107, 107, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 30% at 80% 80%, rgba(0, 212, 255, 0.08) 0%, transparent 50%);
+  }
+
+  .section-gradient {
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgba(108, 60, 225, 0.08) 0%, transparent 60%);
+  }
+
+  .animate-delay-100 {
+    animation-delay: 100ms;
+  }
+
+  .animate-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animate-delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .animate-delay-500 {
+    animation-delay: 500ms;
+  }
+
+  .animate-delay-700 {
+    animation-delay: 700ms;
+  }
+
+  .animate-delay-1000 {
+    animation-delay: 1000ms;
+  }
+
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .rotate-y-5 {
+    transform: rotateY(5deg);
   }
 }
