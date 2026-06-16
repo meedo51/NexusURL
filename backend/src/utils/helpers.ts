@@ -23,7 +23,7 @@ export function generateShortCode(
 }
 
 export function generateShortUrl(shortCode: string): string {
-  return `http://xus.me/${shortCode}`;
+  return `https://xus.me/r/${shortCode}`;
 }
 
 export function generateApiKey(): string {

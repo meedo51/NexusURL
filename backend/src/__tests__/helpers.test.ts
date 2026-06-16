@@ -29,7 +29,7 @@ describe('generateShortCode', () => {
 
 describe('generateShortUrl', () => {
   it('should generate correct short URL', () => {
-    expect(generateShortUrl('abc123')).toBe('http://xus.me/abc123');
+    expect(generateShortUrl('abc123')).toBe('https://xus.me/r/abc123');
   });
 });
 
