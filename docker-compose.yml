@@ -49,14 +49,14 @@ services:
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-this}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-your-super-secret-refresh-key}
-      APP_URL: http://187.77.183.14:1590
-      API_URL: http://187.77.183.14:7658/api
+      APP_URL: https://xus.me
+      API_URL: https://xus.me/api
       EMAIL_HOST: ${EMAIL_HOST:-smtp.gmail.com}
       EMAIL_PORT: ${EMAIL_PORT:-587}
       EMAIL_USER: ${EMAIL_USER:-notifications@xus.me}
       EMAIL_PASS: ${EMAIL_PASS:-}
       TWO_FACTOR_SECRET: ${TWO_FACTOR_SECRET:-nexusurl_2fa_secret_2024}
-      CORS_ORIGIN: http://187.77.183.14:1590
+      CORS_ORIGINS: https://xus.me
       SERVER_IP: 187.77.183.14
       DOMAIN: xus.me
       ENABLE_2FA: "true"

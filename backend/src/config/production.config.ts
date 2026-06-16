@@ -8,10 +8,10 @@ export const productionConfig = {
     frontendPort: 1590,
   },
   urls: {
-    frontend: 'http://187.77.183.14:1590',
-    backend: 'http://187.77.183.14:7658',
-    publicApi: 'http://187.77.183.14:1156',
-    shortDomain: 'http://xus.me',
+    frontend: 'https://xus.me',
+    backend: 'https://xus.me/api',
+    publicApi: 'https://xus.me/api',
+    shortDomain: 'https://xus.me',
   },
   email: {
     from: 'notifications@xus.me',
@@ -26,10 +26,9 @@ export const productionConfig = {
   },
   cors: {
     origins: [
-      'http://187.77.183.14:1590',
+      'https://xus.me',
       'http://xus.me',
-      'http://187.77.183.14:7658',
-      'http://187.77.183.14:1156',
+      'http://187.77.183.14:1590',
     ],
     credentials: true,
   },
