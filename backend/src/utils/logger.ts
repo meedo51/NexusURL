@@ -22,7 +22,7 @@ const logger = winston.createLogger({
   ],
 });
 
-if (config.env === 'production') {
+if (config.env === 'production' && !process.env.DISABLE_FILE_LOGGING) {
   logger.add(new winston.transports.File({ filename: 'logs/error.log', level: 'error' }));
   logger.add(new winston.transports.File({ filename: 'logs/combined.log' }));
 }
