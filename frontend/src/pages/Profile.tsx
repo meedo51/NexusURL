@@ -32,11 +32,11 @@ export default function Profile() {
   const renderTab = () => {
     switch (activeTab) {
       case 'personal':
-        return <PersonalInfoTab user={user} onUpdate={(d) => updateField('/api/user/profile', d, 'Profile updated')} />;
+        return <PersonalInfoTab user={user} onUpdate={(d: any) => updateField('/api/user/profile', d, 'Profile updated')} />;
       case 'security':
         return <SecurityTab user={user} onUpdate={updateField} />;
       case 'preferences':
-        return <PreferencesTab user={user} onUpdate={(d) => updateField('/api/user/preferences', d, 'Preferences saved')} />;
+        return <PreferencesTab user={user} onUpdate={(d: any) => updateField('/api/user/preferences', d, 'Preferences saved')} />;
       case 'api':
         return <ApiAccessTab user={user} />;
       case 'danger':
