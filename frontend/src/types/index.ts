@@ -23,6 +23,8 @@ export interface Link {
   longUrl: string;
   clicks: number;
   uniqueVisitors: number;
+  qrScans?: number;
+  qrCodeUrl?: string;
   hasPassword: boolean;
   expirationDate?: string;
   oneTimeAccess: boolean;
@@ -30,6 +32,21 @@ export interface Link {
   isCustom: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface QRData {
+  shortCode: string;
+  shortUrl: string;
+  longUrl: string;
+  qrDataURL: string;
+  qrScans: number;
+  createdAt: string;
+}
+
+export interface BulkQRResult {
+  shortCode: string;
+  shortUrl: string;
+  qrDataURL: string | null;
 }
 
 export interface LinkStats {

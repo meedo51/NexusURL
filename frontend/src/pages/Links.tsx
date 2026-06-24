@@ -1,81 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiPlus, FiSearch, FiExternalLink, FiTrash2, FiBarChart2, FiChevronLeft, FiChevronRight, FiArrowUp, FiArrowDown } from 'react-icons/fi';
+import { FiPlus, FiSearch, FiChevronLeft, FiChevronRight, FiArrowUp, FiArrowDown, FiDownload } from 'react-icons/fi';
 import api from '../services/api';
 import CreateLinkForm from '../components/CreateLinkForm';
+import LinkRow from '../components/links/LinkRow';
+import QRCodeModal from '../components/links/QRCodeModal';
+import BulkQRGenerator from '../components/links/BulkQRGenerator';
 import toast from 'react-hot-toast';
-
-const statusConfig: Record<string, { label: string; color: string }> = {
-  active: { label: 'Active', color: 'bg-green-500/10 text-green-400 border-green-500/20' },
-  expired: { label: 'Expired', color: 'bg-red-500/10 text-red-400 border-red-500/20' },
-  protected: { label: 'Protected', color: 'bg-purple-500/10 text-purple-400 border-purple-500/20' },
-  onetime: { label: 'One-time', color: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
-  inactive: { label: 'Inactive', color: 'bg-gray-500/10 text-gray-400 border-gray-500/20' },
-  dying: { label: 'Expiring', color: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' },
-};
-
-function getStatus(link: any) {
-  if (!link.isActive) return statusConfig.inactive;
-  if (link.expirationDate && new Date(link.expirationDate) < new Date()) return statusConfig.expired;
-  if (link.expirationDate) {
-    const daysLeft = Math.ceil((new Date(link.expirationDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-    if (daysLeft < 7) return { ...statusConfig.dying, label: `${daysLeft}d left` };
-  }
-  if (link.hasPassword) return statusConfig.protected;
-  if (link.oneTimeAccess) return statusConfig.onetime;
-  return statusConfig.active;
-}
-
-function LinkRow({ link, index, onDelete }: { link: any; index: number; onDelete: (id: string) => void }) {
-  return (
-    <motion.tr
-      className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.03 }}
-    >
-      <td className="py-3.5 px-4">
-        <div className="flex items-center gap-2">
-          <span className="font-medium text-[#00D4FF] text-sm">{link.shortCode}</span>
-          <button
-            onClick={() => { navigator.clipboard.writeText(link.shortUrl); toast.success('Copied!'); }}
-            className="text-gray-500 hover:text-white transition-colors"
-            title="Copy short URL"
-          >
-            <FiExternalLink size={14} />
-          </button>
-        </div>
-      </td>
-      <td className="py-3.5 px-4 text-gray-400 max-w-xs truncate text-sm" title={link.longUrl}>{link.longUrl}</td>
-      <td className="py-3.5 px-4 text-center font-medium text-white">{link.clicks}</td>
-      <td className="py-3.5 px-4 text-center">
-        <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatus(link).color}`}>
-          {getStatus(link).label}
-        </span>
-      </td>
-      <td className="py-3.5 px-4 text-center text-gray-500 text-xs">{new Date(link.createdAt).toLocaleDateString()}</td>
-      <td className="py-3.5 px-4 text-right">
-        <div className="flex items-center justify-end gap-1">
-          <Link
-            to={`/links/${link.id}/stats`}
-            className="p-2 rounded-lg text-gray-500 hover:text-[#00D4FF] hover:bg-white/5 transition-all"
-            title="Stats"
-          >
-            <FiBarChart2 size={15} />
-          </Link>
-          <button
-            onClick={() => onDelete(link.id)}
-            className="p-2 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-all"
-            title="Delete"
-          >
-            <FiTrash2 size={15} />
-          </button>
-        </div>
-      </td>
-    </motion.tr>
-  );
-}
 
 export default function Links() {
   const [links, setLinks] = useState<any[]>([]);
@@ -85,6 +16,9 @@ export default function Links() {
   const [sortBy, setSortBy] = useState('created_at');
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
   const [showCreate, setShowCreate] = useState(false);
+  const [qrLink, setQrLink] = useState<any>(null);
+  const [showBulkQR, setShowBulkQR] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => { loadLinks(); }, [pagination.page, sortBy, order]);
 
@@ -109,6 +43,25 @@ export default function Links() {
       loadLinks();
     } catch { toast.error('Failed to delete link'); }
   };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === links.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(links.map((l) => l.id)));
+    }
+  };
+
+  const selectedLinks = links.filter((l) => selectedIds.has(l.id));
 
   return (
     <div className="relative">
@@ -162,6 +115,14 @@ export default function Links() {
           >
             {order === 'desc' ? <FiArrowDown size={16} /> : <FiArrowUp size={16} />}
           </button>
+          {selectedIds.size > 0 && (
+            <button
+              onClick={() => setShowBulkQR(true)}
+              className="px-4 py-2.5 rounded-xl text-sm font-medium text-white bg-[#6C3CE1]/20 border border-[#6C3CE1]/30 hover:bg-[#6C3CE1]/30 transition-all flex items-center gap-2"
+            >
+              <FiDownload size={15} /> QR ({selectedIds.size})
+            </button>
+          )}
         </div>
 
         <motion.div
@@ -189,6 +150,17 @@ export default function Links() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-white/10 bg-white/[0.02]">
+                    <th className="text-left py-3 px-4 font-medium text-gray-500 w-[90px]">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.size === links.length && links.length > 0}
+                          onChange={toggleSelectAll}
+                          className="rounded border-gray-600 bg-white/5 text-[#6C3CE1] focus:ring-[#6C3CE1]/30"
+                        />
+                        QR
+                      </div>
+                    </th>
                     <th className="text-left py-3 px-4 font-medium text-gray-500">Short URL</th>
                     <th className="text-left py-3 px-4 font-medium text-gray-500">Long URL</th>
                     <th className="text-center py-3 px-4 font-medium text-gray-500">Clicks</th>
@@ -199,7 +171,13 @@ export default function Links() {
                 </thead>
                 <tbody>
                   {links.map((link, i) => (
-                    <LinkRow key={link.id} link={link} index={i} onDelete={handleDelete} />
+                    <LinkRow
+                      key={link.id}
+                      link={link}
+                      index={i}
+                      onDelete={handleDelete}
+                      onShowQR={setQrLink}
+                    />
                   ))}
                 </tbody>
               </table>
@@ -250,6 +228,9 @@ export default function Links() {
           </motion.div>
         </div>
       )}
+
+      <QRCodeModal isOpen={!!qrLink} onClose={() => setQrLink(null)} link={qrLink} />
+      <BulkQRGenerator links={selectedLinks} isOpen={showBulkQR} onClose={() => setShowBulkQR(false)} />
     </div>
   );
 }

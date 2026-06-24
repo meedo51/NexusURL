@@ -89,3 +89,42 @@
     box-shadow: 0 0 20px rgba(108, 60, 225, 0.1);
   }
 }
+
+/* QR Code Preview Styles */
+.qr-cell-preview {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-cell-preview:hover {
+  border-color: rgba(108, 60, 225, 0.5);
+  box-shadow: 0 0 20px rgba(108, 60, 225, 0.15);
+}
+
+/* QR size slider customization */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #6C3CE1;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(108, 60, 225, 0.3);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #6C3CE1;
+  cursor: pointer;
+  border: none;
+}
+
+/* Checkbox styling */
+input[type="checkbox"] {
+  accent-color: #6C3CE1;
+}

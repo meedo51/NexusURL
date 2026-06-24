@@ -64,18 +64,36 @@ model Link {
   oneTimeAccess   Boolean   @default(false) @map("one_time_access")
   accessCount     Int       @default(0) @map("access_count")
   uniqueVisitors  Int       @default(0) @map("unique_visitors")
+  qrScans         Int       @default(0) @map("qr_scans")
+  qrLastScanned   DateTime? @map("qr_last_scanned") @db.Timestamp(6)
   isActive        Boolean   @default(true) @map("is_active")
   createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamp(6)
 
-  user         User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  linkLogs     LinkLog[]
+  user          User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  linkLogs      LinkLog[]
   oneTimeTokens OneTimeToken[]
+  qrScanLogs    QRScanLog[]
 
   @@index([userId], map: "idx_links_user_id")
   @@index([shortCode], map: "idx_links_short_code")
   @@index([expirationDate], map: "idx_links_expiration")
   @@map("links")
+}
+
+model QRScanLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  linkId     String   @map("link_id") @db.Uuid
+  ipAddress  String?  @map("ip_address") @db.Inet
+  userAgent  String?  @map("user_agent") @db.Text
+  referer    String?  @db.Text
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  link Link @relation(fields: [linkId], references: [id], onDelete: Cascade)
+
+  @@index([linkId], map: "idx_qr_scan_logs_link_id")
+  @@index([createdAt], map: "idx_qr_scan_logs_created_at")
+  @@map("qr_scan_logs")
 }
 
 model LinkLog {

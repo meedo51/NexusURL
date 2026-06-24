@@ -107,11 +107,13 @@ export async function getUserLinks(req: AuthenticatedRequest, res: Response, nex
       longUrl: link.longUrl,
       clicks: link.accessCount,
       uniqueVisitors: link.uniqueVisitors,
+      qrScans: link.qrScans || 0,
       hasPassword: !!link.passwordHash,
       expirationDate: link.expirationDate,
       oneTimeAccess: link.oneTimeAccess,
       isActive: link.isActive,
       isCustom: link.isCustom,
+      qrCodeUrl: `${config.urls.backend}/api/qr/${link.shortCode}`,
       createdAt: link.createdAt,
       updatedAt: link.updatedAt,
     }));
@@ -299,6 +301,17 @@ export async function redirectHandler(req: AuthenticatedRequest, res: Response, 
       });
 
       await db.incrementLinkAccess(link.id || link._id, false);
+
+      // Track QR code scan if the request came via QR code
+      if (req.query.qr === '1') {
+        await db.createQRScanLog({
+          linkId: link.id || link._id,
+          ipAddress: ip,
+          userAgent: ua,
+          referer: referer as string,
+        });
+        await db.incrementQRScans(link.id || link._id);
+      }
 
       const user = link.user;
       if (user && user.notificationEnabled && config.features.enableEmailNotifications) {

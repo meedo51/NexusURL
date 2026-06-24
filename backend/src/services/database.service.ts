@@ -218,9 +218,22 @@ class DatabaseService {
       if (log.ipAddress) uniqueIps.add(log.ipAddress);
     });
 
+    const qrScanLogs = await this.prisma.qRScanLog.findMany({
+      where: { linkId },
+      orderBy: { createdAt: 'desc' },
+    });
+
     return {
       totalClicks: link?.accessCount || 0,
       uniqueVisitors: uniqueIps.size,
+      qrScans: link?.qrScans || 0,
+      qrScansByDay: Object.entries(
+        qrScanLogs.reduce((acc: Record<string, number>, log) => {
+          const day = log.createdAt.toISOString().split('T')[0];
+          acc[day] = (acc[day] || 0) + 1;
+          return acc;
+        }, {})
+      ).map(([date, count]) => ({ date, count })),
       clicksByDay: Object.entries(clicksByDay).map(([date, count]) => ({ date, count })),
       topReferrers: Object.entries(topReferrers)
         .map(([referer, count]) => ({ referer, count }))
@@ -230,6 +243,26 @@ class DatabaseService {
       browsers: Object.entries(browsers).map(([name, count]) => ({ name, count })),
       countries: Object.entries(countries).map(([country, count]) => ({ country, count })),
     };
+  }
+
+  // QR scan log operations
+  async createQRScanLog(data: {
+    linkId: string;
+    ipAddress?: string;
+    userAgent?: string;
+    referer?: string;
+  }) {
+    return this.prisma.qRScanLog.create({ data });
+  }
+
+  async incrementQRScans(linkId: string) {
+    return this.prisma.link.update({
+      where: { id: linkId },
+      data: {
+        qrScans: { increment: 1 },
+        qrLastScanned: new Date(),
+      },
+    });
   }
 
   // One-time tokens

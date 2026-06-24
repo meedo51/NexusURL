@@ -40,4 +40,40 @@ api.interceptors.response.use(
   }
 );
 
+export const qrApi = {
+  getQRCodeUrl: (shortCode: string, size = 300) => {
+    return `${API_CONFIG.BASE_URLS.BACKEND_API}/api/qr/${shortCode}?size=${size}`;
+  },
+
+  getQRData: async (shortCode: string) => {
+    const response = await api.get(`/api/qr/${shortCode}/data`);
+    return response.data.data;
+  },
+
+  getQRSVGUrl: (shortCode: string) => {
+    return `${API_CONFIG.BASE_URLS.BACKEND_API}/api/qr/${shortCode}?format=svg`;
+  },
+
+  downloadQR: async (shortCode: string, filename?: string) => {
+    const response = await api.get(`/api/qr/${shortCode}`, {
+      responseType: 'blob',
+    });
+    const url = window.URL.createObjectURL(response.data);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename || `nexusurl-${shortCode}.png`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  },
+
+  trackQRScan: async (shortCode: string) => {
+    await api.post(`/api/qr/${shortCode}/track`);
+  },
+
+  bulkGenerateQR: async (shortCodes: string[]) => {
+    const response = await api.post('/api/qr/bulk', { shortCodes });
+    return response.data.data.qrCodes;
+  },
+};
+
 export default api;
